@@ -1,0 +1,3448 @@
+openapi: 3.0.3
+info:
+  description: GroupBy Retail API
+  title: GroupBy Retail
+  version: "0.0"
+externalDocs:
+  description: ""
+  url: ""
+servers:
+- url: /
+paths:
+  /api/search:
+    post:
+      description: Perform a search against the GroupBy Retail Search API.
+      operationId: search
+      parameters:
+      - description: Custom HTTP header which may contain tenant name. Used to define
+          a client by its name.
+        explode: false
+        in: header
+        name: X-Groupby-Customer-Id
+        required: true
+        schema:
+          type: string
+        style: simple
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SearchRequestDto'
+        description: "Request that should be populated to configure a search API call,\
+          \ made by the client on behalf of a shopper."
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SearchResponseDto'
+          description: Search was accepted and a normal response could be generated.
+          headers:
+            Content-Type:
+              description: "In responses, a Content-Type header provides the client\
+                \ with the actual content type of the returned content."
+              explode: false
+              schema:
+                type: string
+              style: simple
+            Date:
+              description: The Date general HTTP header contains the date and time
+                at which the message was originated.
+              explode: false
+              schema:
+                type: string
+              style: simple
+            Content-Length:
+              description: "The Content-Length header indicates the size of the message\
+                \ body, in bytes, sent to the recipient."
+              explode: false
+              schema:
+                type: string
+              style: simple
+            Connection:
+              description: "The Connection general header controls whether the network\
+                \ connection stays open after the current transaction finishes. If\
+                \ the value sent is keep-alive, the connection is persistent and not\
+                \ closed, allowing for subsequent requests to the same server to be\
+                \ done."
+              explode: false
+              schema:
+                type: string
+              style: simple
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDto'
+          description: "Client has made a bad request, usually a validation constraint\
+            \ has been violated. See the message for further information."
+        "403":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDto'
+          description: Client is not authorized to perform the requested operation.
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDto'
+          description: There was an internal error processing the search request.
+      security:
+      - ClientKey: []
+      - GroupByIncEmployee: []
+      summary: Provided search functionality
+      tags:
+      - Search
+    servers:
+    - url: "https://search.{environment}.groupbycloud.com"
+      variables:
+        environment:
+          default: YOUR_ENV_HERE
+  /api/search/facet:
+    post:
+      description: Perform a facet search against the GroupBy Retail Search API.
+      operationId: facetSearch
+      parameters:
+      - description: Custom HTTP header which may contain tenant name. Used to define
+          a client by its name.
+        explode: false
+        in: header
+        name: X-Groupby-Customer-Id
+        required: true
+        schema:
+          type: string
+        style: simple
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FacetSearchRequestDto'
+        description: "Request that should be populated to configure a search API call,\
+          \ made by the client on behalf of a shopper. Contains original request and\
+          \ information about facet for which extra keys requested."
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FacetSearchResponseDto'
+          description: Successful facet search response. Contains original request
+            and navigation with relevant facet keys.
+          headers:
+            Content-Type:
+              description: "In responses, a Content-Type header provides the client\
+                \ with the actual content type of the returned content."
+              explode: false
+              schema:
+                type: string
+              style: simple
+            Date:
+              description: The Date general HTTP header contains the date and time
+                at which the message was originated.
+              explode: false
+              schema:
+                type: string
+              style: simple
+            Content-Length:
+              description: "The Content-Length header indicates the size of the message\
+                \ body, in bytes, sent to the recipient."
+              explode: false
+              schema:
+                type: string
+              style: simple
+            Connection:
+              description: "The Connection general header controls whether the network\
+                \ connection stays open after the current transaction finishes. If\
+                \ the value sent is keep-alive, the connection is persistent and not\
+                \ closed, allowing for subsequent requests to the same server to be\
+                \ done."
+              explode: false
+              schema:
+                type: string
+              style: simple
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDto'
+          description: "Client has made a bad request, usually a validation constraint\
+            \ has been violated. See the message for further information."
+        "403":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDto'
+          description: Client is not authorized to perform the requested operation.
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDto'
+          description: There was an internal error processing the search request.
+      security:
+      - ClientKey: []
+      - GroupByIncEmployee: []
+      summary: Provided search functionality
+      tags:
+      - Search
+    servers:
+    - url: "https://search.{environment}.groupbycloud.com"
+      variables:
+        environment:
+          default: YOUR_ENV_HERE
+  /api/search/product:
+    get:
+      description: Perform a product search against the GroupBy Retail Search API.
+      operationId: getByProductIds
+      parameters:
+      - description: Collection name
+        explode: true
+        in: query
+        name: collection
+        required: true
+        schema:
+          type: string
+        style: form
+      - description: Product ID which need to be search
+        explode: true
+        in: query
+        name: productId
+        required: true
+        schema:
+          type: string
+        style: form
+      - description: |-
+          Required. This parameter will extract from header X-Groupby-Customer-Id. May contain tenant name. Used to define a
+                                    client by its name.
+        explode: false
+        in: header
+        name: X-Groupby-Customer-Id
+        required: true
+        schema:
+          type: string
+        style: simple
+      - description: |-
+          Not required. If the product has variant list and the request specifies the variantIds, requested variants will be the
+                                    first in the response.
+        explode: true
+        in: query
+        name: variantIds
+        required: false
+        schema:
+          items:
+            type: string
+          nullable: true
+          type: array
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProductDto'
+          description: Product is found.
+          headers:
+            Content-Type:
+              description: "In responses, a Content-Type header provides the client\
+                \ with the actual content type of the returned content."
+              explode: false
+              schema:
+                type: string
+              style: simple
+            Date:
+              description: The Date general HTTP header contains the date and time
+                at which the message was originated.
+              explode: false
+              schema:
+                type: string
+              style: simple
+            Content-Length:
+              description: "The Content-Length header indicates the size of the message\
+                \ body, in bytes, sent to the recipient."
+              explode: false
+              schema:
+                type: string
+              style: simple
+            Connection:
+              description: "The Connection general header controls whether the network\
+                \ connection stays open after the current transaction finishes. If\
+                \ the value sent is keep-alive, the connection is persistent and not\
+                \ closed, allowing for subsequent requests to the same server to be\
+                \ done."
+              explode: false
+              schema:
+                type: string
+              style: simple
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDto'
+          description: "Client has made a bad request, usually a validation constraint\
+            \ has been violated. See the message for further information."
+        "403":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDto'
+          description: Client is not authorized to perform the requested operation.
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDto'
+          description: There was an internal error processing the search request.
+      security:
+      - ClientKey: []
+      - GroupByIncEmployee: []
+      summary: Provided product search functionality
+      tags:
+      - Product
+    servers:
+    - url: "https://search.{environment}.groupbycloud.com"
+      variables:
+        environment:
+          default: YOUR_ENV_HERE
+  /api/request:
+    get:
+      description: A simple request used to get completes the specified prefix with
+        keyword suggestions.
+      operationId: Autocompletesearch
+      parameters:
+      - description: Header on incoming HTTP requests that is populated by the API
+          gateway and indicates the customer ID.
+        explode: false
+        in: header
+        name: X-Groupby-Customer-Id
+        required: true
+        schema:
+          type: string
+        style: simple
+      - description: |
+          Object which is represent autocomplete request and encapsulate all passed parameters.
+        explode: true
+        in: query
+        name: request
+        required: false
+        schema:
+          $ref: '#/components/schemas/Request'
+        style: form
+      - explode: true
+        in: query
+        name: identity
+        required: true
+        schema:
+          $ref: '#/components/schemas/Identity'
+        style: form
+      - explode: true
+        in: query
+        name: merchandiser
+        required: true
+        schema:
+          $ref: '#/components/schemas/Merchandiser'
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SearchResults'
+          description: "Success response, returns result of operation. It is can be\
+            \ either empty body, object model or list of models."
+          headers:
+            Content-Type:
+              description: "In responses, a Content-Type header provides the client\
+                \ with the actual content type of the returned content."
+              explode: false
+              schema:
+                type: string
+              style: simple
+            Date:
+              description: The Date general HTTP header contains the date and time
+                at which the message was originated.
+              explode: false
+              schema:
+                type: string
+              style: simple
+            Content-Length:
+              description: "The Content-Length header indicates the size of the message\
+                \ body, in bytes, sent to the recipient."
+              explode: false
+              schema:
+                type: string
+              style: simple
+            Connection:
+              description: "The Connection general header controls whether the network\
+                \ connection stays open after the current transaction finishes. If\
+                \ the value sent is keep-alive, the connection is persistent and not\
+                \ closed, allowing for subsequent requests to the same server to be\
+                \ done."
+              explode: false
+              schema:
+                type: string
+              style: simple
+            Content-Encoding:
+              description: "The Content-Encoding representation header lists any encodings\
+                \ that have been applied to the representation (message payload),\
+                \ and in what order. This lets the recipient know how to decode the\
+                \ representation in order to obtain the original payload format. Content\
+                \ encoding is mainly used to compress the message data without losing\
+                \ information about the origin media type."
+              explode: false
+              schema:
+                type: string
+              style: simple
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: "Client has made a bad request, usually a validation constraint\
+            \ has been violated. See the message for further information."
+          headers:
+            Content-Type:
+              description: "In responses, a Content-Type header provides the client\
+                \ with the actual content type of the returned content."
+              explode: false
+              schema:
+                type: string
+              style: simple
+            Date:
+              description: The Date general HTTP header contains the date and time
+                at which the message was originated.
+              explode: false
+              schema:
+                type: string
+              style: simple
+            Content-Length:
+              description: "The Content-Length header indicates the size of the message\
+                \ body, in bytes, sent to the recipient."
+              explode: false
+              schema:
+                type: string
+              style: simple
+            Connection:
+              description: "The Connection general header controls whether the network\
+                \ connection stays open after the current transaction finishes. If\
+                \ the value sent is keep-alive, the connection is persistent and not\
+                \ closed, allowing for subsequent requests to the same server to be\
+                \ done."
+              explode: false
+              schema:
+                type: string
+              style: simple
+      security:
+      - ClientKey: []
+      - GroupByIncEmployee: []
+      tags:
+      - Autocomplete
+    servers:
+    - url: "https://autocomplete.{environment}.groupbycloud.com"
+      variables:
+        environment:
+          default: YOUR_ENV_HERE
+  /api/predict:
+    post:
+      deprecated: true
+      description: Perform a recommendation request against the GroupBy Retail Recommendations
+        API.
+      operationId: predict
+      parameters:
+      - description: Custom HTTP header which may contain tenant name. Used to define
+          a client by its name.
+        explode: false
+        in: header
+        name: X-Groupby-Customer-Id
+        required: true
+        schema:
+          type: string
+        style: simple
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RecommendationsRequest'
+        description: Request that should be populated to configure a recommendations
+          API call made by the client.
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PredictResults'
+          description: Ok
+          headers:
+            Content-Type:
+              description: "In responses, a Content-Type header provides the client\
+                \ with the actual content type of the returned content."
+              explode: false
+              schema:
+                type: string
+              style: simple
+            Date:
+              description: The Date general HTTP header contains the date and time
+                at which the message was originated.
+              explode: false
+              schema:
+                type: string
+              style: simple
+            Content-Length:
+              description: "The Content-Length header indicates the size of the message\
+                \ body, in bytes, sent to the recipient."
+              explode: false
+              schema:
+                type: string
+              style: simple
+            Connection:
+              description: "The Connection general header controls whether the network\
+                \ connection stays open after the current transaction finishes. If\
+                \ the value sent is keep-alive, the connection is persistent and not\
+                \ closed, allowing for subsequent requests to the same server to be\
+                \ done."
+              explode: false
+              schema:
+                type: string
+              style: simple
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RecommendationsErrorResponse'
+          description: Bad Request
+        "403":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RecommendationsErrorResponse'
+          description: Forbidden
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RecommendationsErrorResponse'
+          description: Not Found
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RecommendationsErrorResponse'
+          description: Internal Server Error
+      security:
+      - ClientKey: []
+      - GroupByIncEmployee: []
+      summary: Provide Recommendations AI functionality.
+      tags:
+      - Recommendations API
+    servers:
+    - url: "https://recsapi.{environment}.groupbycloud.com"
+      variables:
+        environment:
+          default: YOUR_ENV_HERE
+  /api/recommendation:
+    post:
+      description: Perform a recommendation request against the GroupBy Retail Recommendations
+        API.
+      operationId: predictV2
+      parameters:
+      - description: Custom HTTP header which may contain tenant name. Used to define
+          a client by its name.
+        explode: false
+        in: header
+        name: X-Groupby-Customer-Id
+        required: true
+        schema:
+          type: string
+        style: simple
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RecommendationsRequest'
+        description: Request that should be populated to configure a recommendations
+          API call made by the client.
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PredictResults'
+          description: Ok
+          headers:
+            Content-Type:
+              description: "In responses, a Content-Type header provides the client\
+                \ with the actual content type of the returned content."
+              explode: false
+              schema:
+                type: string
+              style: simple
+            Date:
+              description: The Date general HTTP header contains the date and time
+                at which the message was originated.
+              explode: false
+              schema:
+                type: string
+              style: simple
+            Content-Length:
+              description: "The Content-Length header indicates the size of the message\
+                \ body, in bytes, sent to the recipient."
+              explode: false
+              schema:
+                type: string
+              style: simple
+            Connection:
+              description: "The Connection general header controls whether the network\
+                \ connection stays open after the current transaction finishes. If\
+                \ the value sent is keep-alive, the connection is persistent and not\
+                \ closed, allowing for subsequent requests to the same server to be\
+                \ done."
+              explode: false
+              schema:
+                type: string
+              style: simple
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RecommendationsErrorResponse'
+          description: Bad Request
+        "403":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RecommendationsErrorResponse'
+          description: Forbidden
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RecommendationsErrorResponse'
+          description: Not Found
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RecommendationsErrorResponse'
+          description: Internal Server Error
+      security:
+      - ClientKey: []
+      - GroupByIncEmployee: []
+      summary: Provide Recommendations AI functionality.
+      tags:
+      - Recommendations API
+    servers:
+    - url: "https://recsapi.{environment}.groupbycloud.com"
+      variables:
+        environment:
+          default: YOUR_ENV_HERE
+components:
+  schemas:
+    Audience:
+      description: "The target group associated with a given audience (e.g. male,\
+        \ veterans, car owners, musicians, etc.) of the product."
+      properties:
+        genders:
+          description: "The genders of the audience. Strongly encouraged to use the\
+            \ standard values: 'male', 'female', 'unisex'. At most 5 values are allowed.\
+            \ Length limit of 128 characters."
+          example: unisex
+          items:
+            type: string
+          type: array
+        ageGroups:
+          description: "The age groups of the audience. Strongly encouraged to use\
+            \ the standard values: 'newborn' (up to 3 months old), 'infant' (3-12\
+            \ months old), 'toddler' (1-5 years old), 'kids' (5-13 years old), 'adult'\
+            \ (typically teens or older). At most 5 values are allowed. Length limit\
+            \ of 128 characters."
+          example: newborn
+          items:
+            type: string
+          type: array
+      title: Audience
+      type: object
+    BiasDto:
+      description: Biases the search results to either increase or decrease product
+        relevancy for products that match the given field and content.
+      example:
+        field: colorFamilies
+        strength: null
+        content: Red
+      properties:
+        field:
+          description: The field the bias refers to.
+          example: colorFamilies
+          type: string
+        content:
+          description: The content the field must match for the bias to be applied.
+          example: Red
+          nullable: true
+          type: string
+        strength:
+          $ref: '#/components/schemas/BiasDto.StrengthDto'
+      required:
+      - field
+      - strength
+      title: Bias
+      type: object
+    BiasDto.StrengthDto:
+      description: The amount the bias will affect the search results.
+      enum:
+      - ABSOLUTE_INCREASE
+      - STRONG_INCREASE
+      - MEDIUM_INCREASE
+      - WEAK_INCREASE
+      - LEAVE_UNCHANGED
+      - WEAK_DECREASE
+      - MEDIUM_DECREASE
+      - STRONG_DECREASE
+      - ABSOLUTE_DECREASE
+      title: Strength
+      type: string
+    BiasingProfileDto:
+      description: "Inline biasing profile, which should be applied to the search.\
+        \ Takes priority over biasing profile."
+      example:
+        biases:
+        - field: colorFamilies
+          strength: null
+          content: Red
+        - field: colorFamilies
+          strength: null
+          content: Red
+      nullable: true
+      properties:
+        biases:
+          items:
+            $ref: '#/components/schemas/BiasDto'
+          type: array
+      required:
+      - biases
+      title: Biasing Profile
+      type: object
+    BoostedProductBucket:
+      properties:
+        products:
+          items:
+            type: string
+          type: array
+      required:
+      - products
+      type: object
+    ColorInfo:
+      description: Product color info.
+      properties:
+        colorFamilies:
+          description: Product color families (array).
+          example: Blue
+          items:
+            type: string
+          type: array
+        colors:
+          description: Product color (array).
+          example: Navy
+          items:
+            type: string
+          type: array
+      title: ColorInfo
+      type: object
+    CustomParameterDto:
+      description: A key=value combination to allow for further triggering of rules
+        or redirects.
+      example:
+        value: easter-2021
+        key: landing-page
+      properties:
+        key:
+          description: Key of the custom parameter.
+          example: landing-page
+          type: string
+        value:
+          description: Value of the custom parameter
+          example: easter-2021
+          type: string
+      required:
+      - key
+      - value
+      title: Custom Parameter
+      type: object
+    CustomParameterTrigger:
+      properties:
+        key:
+          type: string
+        value:
+          type: string
+      required:
+      - key
+      - value
+      type: object
+    DebugDto:
+      description: Contains debug info associated to response.
+      example:
+        rawSearchRequest:
+        - "{}"
+        - "{}"
+        rawSearchResponse:
+        - "{}"
+        - "{}"
+      properties:
+        rawSearchRequest:
+          description: Search request in raw format executed internally against search
+            engine.
+          items:
+            type: object
+          type: array
+        rawSearchResponse:
+          description: Search response in raw format received internally from search
+            engine.
+          items:
+            type: object
+          type: array
+      title: Debug Info
+      type: object
+    ErrorDto:
+      description: Error returned by the API.
+      properties:
+        trackingId:
+          description: Identifier used for tracking purposes.
+          example: bb25d616-2cd7-44a1-8d11-27159f2aa03c
+          type: string
+        method:
+          description: HTTP method of the API call which produced the error.
+          example: POST
+          type: string
+        path:
+          description: HTTP path of the API call which produced the error.
+          example: /api/v2/search
+          type: string
+        message:
+          description: Error message.
+          example: Search request page size must be greater than or equal to 0.
+          type: string
+      title: Error
+      type: object
+    Experiment:
+      description: Information about Rule based Experiment.
+      example:
+        experimentVariant: Variant A
+        experimentId: experiment_variant_name
+      properties:
+        experimentId:
+          description: Experiment id.
+          example: experiment_variant_name
+          type: string
+        experimentVariant:
+          description: Experiment variant.
+          example: Variant A
+          type: string
+      title: Experiment
+      type: object
+    ExperimentVariant:
+      properties:
+        name:
+          type: string
+        ruleVariant:
+          $ref: '#/components/schemas/RuleVariant'
+        variantTriggerPercentage:
+          format: int32
+          type: integer
+      required:
+      - name
+      - ruleVariant
+      - variantTriggerPercentage
+      type: object
+    Facet:
+      description: A facet specification to perform faceted search.
+      example:
+        navigationName: anyName
+        contains: Shoe
+        prefix: Women
+        displayName: anyName
+        type: ""
+      properties:
+        prefix:
+          description: "Only get facet values that start with the given string prefix.\
+            \ For example, suppose \"categories\" has three values \"Women > Shoe\"\
+            , \"Women > Dress\" and \"Men > Shoe\". If set \"prefixes\" to \"Women\"\
+            , the \"categories\" facet will give only \"Women > Shoe\" and \"Women\
+            \ > Dress\". Only supported on textual fields. Maximum is 10. This field\
+            \ is case-sensitive"
+          example: Women
+          type: string
+        contains:
+          description: "Only get facet values that contains the given strings. For\
+            \ example, suppose \"categories\" has three values \"Women > Shoe\", \"\
+            Women > Dress\" and \"Men > Shoe\". If set \"contains\" to \"Shoe\", the\
+            \ \"categories\" facet will give only \"Women > Shoe\" and \"Men > Shoe\"\
+            . Only supported on textual fields. Maximum is 10. This field is case-sensitive"
+          example: Shoe
+          type: string
+        displayName:
+          description: Display name of facet
+          example: anyName
+          type: string
+        type:
+          allOf:
+          - $ref: '#/components/schemas/NavigationType'
+          - description: Represents the type of navigation. Only navigation with type
+              "value" may be used in facet search request.
+        navigationName:
+          description: Represents the name of navigation.
+          example: anyName
+          type: string
+      title: Facet
+      type: object
+    FacetSearchRequestDto:
+      description: "Request that should be populated to configure a search API call,\
+        \ made by the client on behalf of a shopper. Contains original request and\
+        \ information about facet for which extra keys requested."
+      example:
+        originalRequest:
+          overwrites: null
+          preFilter: "(categories:ANY(\"Men\")) AND (ageGroups:ANY(\"adult\")) AND\
+            \ (price: IN(150, 200))"
+          loginId: loginId
+          pinUnexpandedResults: true
+          dynamicFacet: true
+          responseMask: "[\"key.innerKey.value\", \"key2\", \"key.innerKey2.value2\"\
+            ]"
+          pageSize: 25
+          skip: 50
+          excludedNavigations:
+          - excludedNavigations
+          - excludedNavigations
+          customUrlParams:
+          - value: easter-2021
+            key: landing-page
+          - value: easter-2021
+            key: landing-page
+          biasing:
+            biases:
+            - field: colorFamilies
+              strength: null
+              content: Red
+            - field: colorFamilies
+              strength: null
+              content: Red
+          sorts:
+          - field: rating
+            order: Ascending
+          - field: rating
+            order: Ascending
+          includeExpandedResults: true
+          area: Production
+          debug: true
+          query: blue sweater
+          spellCorrectionMode: ""
+          facetLimit: 0
+          collection: productsClothing
+          refinements:
+          - navigationName: brands
+            high: 100
+            or: false
+            low: 50
+            source: Dynamic
+            type: ""
+            value: value
+          - navigationName: brands
+            high: 100
+            or: false
+            low: 50
+            source: Dynamic
+            type: ""
+            value: value
+          variantRollupKeys:
+          - variantRollupKeys
+          - variantRollupKeys
+          pageCategories: "[\"Sales > 2017 Black Friday Deals\"]"
+          includedNavigations:
+          - includedNavigations
+          - includedNavigations
+          site: site
+          biasingProfile: biasingProfile
+          visitorId: 38400000-8cf0-11bd-b23e-10b96e40000d
+        facet:
+          navigationName: anyName
+          contains: Shoe
+          prefix: Women
+          displayName: anyName
+          type: ""
+      properties:
+        facet:
+          $ref: '#/components/schemas/Facet'
+        originalRequest:
+          $ref: '#/components/schemas/SearchRequestDto'
+      required:
+      - facet
+      - originalRequest
+      title: Facet Search Request
+      type: object
+    FacetSearchResponseDto:
+      description: Facet search response representation.
+      example:
+        originalRequest:
+          overwrites: null
+          preFilter: "(categories:ANY(\"Men\")) AND (ageGroups:ANY(\"adult\")) AND\
+            \ (price: IN(150, 200))"
+          loginId: loginId
+          pinUnexpandedResults: true
+          dynamicFacet: true
+          responseMask: "[\"key.innerKey.value\", \"key2\", \"key.innerKey2.value2\"\
+            ]"
+          pageSize: 25
+          skip: 50
+          excludedNavigations:
+          - excludedNavigations
+          - excludedNavigations
+          customUrlParams:
+          - value: easter-2021
+            key: landing-page
+          - value: easter-2021
+            key: landing-page
+          biasing:
+            biases:
+            - field: colorFamilies
+              strength: null
+              content: Red
+            - field: colorFamilies
+              strength: null
+              content: Red
+          sorts:
+          - field: rating
+            order: Ascending
+          - field: rating
+            order: Ascending
+          includeExpandedResults: true
+          area: Production
+          debug: true
+          query: blue sweater
+          spellCorrectionMode: ""
+          facetLimit: 0
+          collection: productsClothing
+          refinements:
+          - navigationName: brands
+            high: 100
+            or: false
+            low: 50
+            source: Dynamic
+            type: ""
+            value: value
+          - navigationName: brands
+            high: 100
+            or: false
+            low: 50
+            source: Dynamic
+            type: ""
+            value: value
+          variantRollupKeys:
+          - variantRollupKeys
+          - variantRollupKeys
+          pageCategories: "[\"Sales > 2017 Black Friday Deals\"]"
+          includedNavigations:
+          - includedNavigations
+          - includedNavigations
+          site: site
+          biasingProfile: biasingProfile
+          visitorId: 38400000-8cf0-11bd-b23e-10b96e40000d
+        availableNavigation:
+          metadata:
+          - value: value
+            key: key
+          - value: value
+            key: key
+          or: true
+          displayName: Brand
+          name: brands
+          placeId: placeId
+          source: source
+          type: null
+          refinements:
+          - high: 100
+            low: 50
+            count: 189
+            type: null
+            value: Surf's Up
+          - high: 100
+            low: 50
+            count: 189
+            type: null
+            value: Surf's Up
+      properties:
+        originalRequest:
+          $ref: '#/components/schemas/SearchRequestDto'
+        availableNavigation:
+          $ref: '#/components/schemas/NavigationDto'
+      required:
+      - availableNavigation
+      - originalRequest
+      title: Facet Search Response
+      type: object
+    FieldMask:
+      description: Retrievable fields.
+      properties:
+        paths:
+          description: Paths for retrievable fields (array).
+          example: "color_info, price_info, audience, images, sizes, materials, name,\
+            \ availability, title, uri. When list is empty or \"*\" string exist in\
+            \ list -api will return all fields."
+          items:
+            type: string
+          type: array
+      title: FieldMask
+      type: object
+    FulfillmentInfo:
+      description: "Fulfillment information, such as the store IDs for in-store pickup\
+        \ or region IDs for different shipping methods."
+      example:
+        type: pickup-in-store
+        placeIds: "6, 4, 8"
+      properties:
+        type:
+          description: Fulfillment type. Place where product fulfilled.
+          example: pickup-in-store
+          type: string
+        placeIds:
+          description: Place ids where product fulfilled (array).
+          example: "6, 4, 8"
+          items:
+            type: string
+          type: array
+      title: FulfillmentInfo
+      type: object
+    Image:
+      description: Product image
+      example:
+        width: 150
+        uri: https://storage.googleapis.com/poc_apparel/images/1/optimized/3412471_fpx.tif
+        height: 150
+      properties:
+        uri:
+          description: Absolute path to product image.
+          example: https://storage.googleapis.com/poc_apparel/images/1/optimized/3412471_fpx.tif
+          type: string
+        height:
+          description: Height in pixels
+          example: 150
+          format: int32
+          type: integer
+        width:
+          description: Width in pixels
+          example: 150
+          format: int32
+          type: integer
+      title: Image
+      type: object
+    Interval:
+      description: A floating point interval.
+      properties:
+        minimum:
+          description: "Inclusive lower bound. The lower bound of the interval. If\
+            \ neither of the min fields (minimum or exclusiveMinimum) are set, then\
+            \ the lower bound is negative infinity. This field must be not larger\
+            \ than maximum or exclusiveMaximum."
+          example: 1
+          format: double
+          type: number
+        exclusiveMinimum:
+          description: "Exclusive lower bound. The lower bound of the interval. If\
+            \ neither of the min fields (minimum or exclusiveMinimum) are set, then\
+            \ the lower bound is negative infinity. This field must be not larger\
+            \ than maximum or exclusiveMaximum."
+          example: 1
+          format: double
+          type: number
+        maximum:
+          description: "Inclusive upper bound. The upper bound of the interval. If\
+            \ neither of the max fields are set, then the upper bound is positive\
+            \ infinity. This field must be not smaller than minimum or exclusiveMinimum."
+          example: 1
+          format: double
+          type: number
+        exclusiveMaximum:
+          description: "Exclusive upper bound. The upper bound of the interval. If\
+            \ neither of the max fields are set, then the upper bound is positive\
+            \ infinity. This field must be not smaller than minimum or exclusiveMinimum."
+          example: 1
+          format: double
+          type: number
+      title: Interval
+      type: object
+    MessageType:
+      enum:
+      - UPDATE
+      - DELETE
+      - CREATE
+      - UNRECOGNIZED
+      type: string
+    Metadata:
+      description: Area metadata used to store additional data from user in format
+        field/value.
+      example:
+        value: value
+        key: key
+      properties:
+        key:
+          type: string
+        value:
+          type: string
+      required:
+      - key
+      - value
+      type: object
+    NavigationDto:
+      description: Navigation available for the shopper to refine the results on.
+      example:
+        metadata:
+        - value: value
+          key: key
+        - value: value
+          key: key
+        or: true
+        displayName: Brand
+        name: brands
+        placeId: placeId
+        source: source
+        type: null
+        refinements:
+        - high: 100
+          low: 50
+          count: 189
+          type: null
+          value: Surf's Up
+        - high: 100
+          low: 50
+          count: 189
+          type: null
+          value: Surf's Up
+      properties:
+        name:
+          description: Name of the field the navigation in on.
+          example: brands
+          type: string
+        displayName:
+          description: Name of the navigation for display purposes.
+          example: Brand
+          type: string
+        type:
+          $ref: '#/components/schemas/NavigationTypeDto'
+        refinements:
+          items:
+            $ref: '#/components/schemas/RefinementDto'
+          type: array
+        or:
+          description: Flag if this navigation supports or queries.
+          type: boolean
+        source:
+          type: string
+        metadata:
+          items:
+            $ref: '#/components/schemas/Metadata'
+          type: array
+        placeId:
+          description: Place id for inventory navigations.
+          type: string
+      required:
+      - metadata
+      - placeId
+      - refinements
+      - source
+      - type
+      title: Navigation
+      type: object
+    NavigationType:
+      description: Type of navigation.
+      enum:
+      - VALUE
+      - RANGE
+      type: string
+    NavigationTypeDto:
+      description: Type of navigation.
+      enum:
+      - Value
+      - Range
+      title: Navigation Type
+      type: string
+    Order:
+      enum:
+      - ASCENDING
+      - DESCENDING
+      type: string
+    Overwrites:
+      properties:
+        rules:
+          items:
+            $ref: '#/components/schemas/RuleConfiguration'
+          type: array
+      required:
+      - rules
+      type: object
+    PageInfoDto:
+      description: Information regarding where the page of results starts and ends.
+      example:
+        recordStart: 50
+        recordEnd: 75
+      properties:
+        recordStart:
+          description: Where in the list of products the page begins.
+          example: 50
+          format: int64
+          minimum: 0
+          type: integer
+        recordEnd:
+          description: Where in the list of products the page ends.
+          example: 75
+          format: int64
+          minimum: 1
+          type: integer
+      title: Page Info
+      type: object
+    Pattern:
+      type: object
+    PinnedRefinement:
+      properties:
+        navigation:
+          type: string
+        refinements:
+          items:
+            $ref: '#/components/schemas/Refinement'
+          type: array
+      required:
+      - navigation
+      - refinements
+      type: object
+    PriceInfo:
+      description: Price info representation.
+      properties:
+        currencyCode:
+          description: Currency code.
+          example: CAD
+          type: string
+        price:
+          description: Price value.
+          example: 1
+          format: float
+          type: number
+        originalPrice:
+          description: Original price value.
+          example: 1
+          format: float
+          type: number
+        cost:
+          description: Cost
+          example: 1
+          format: float
+          type: number
+        priceEffectiveTime:
+          $ref: '#/components/schemas/PriceInfo_priceEffectiveTime'
+        priceExpireTime:
+          $ref: '#/components/schemas/PriceInfo_priceExpireTime'
+        priceRange:
+          $ref: '#/components/schemas/PriceInfo_priceRange'
+      title: PriceInfo
+      type: object
+    PriceInfo.PriceRange:
+      description: The price range of all variant of product having the same primaryProductId
+      properties:
+        price:
+          $ref: '#/components/schemas/PriceInfo_PriceRange_price'
+        originalPrice:
+          $ref: '#/components/schemas/PriceInfo_PriceRange_originalPrice'
+      title: PriceRange
+      type: object
+    ProductCustomAttribute:
+      description: A custom attribute that is not explicitly modeled in product.
+      properties:
+        text:
+          description: The textual values of this custom attribute. At most 400 values
+            are allowed. Empty values are not allowed. Length limit of 256 characters.
+            Exactly one of text or numbers should be set.
+          example: "['yellow','green']` when the key is 'color'."
+          items:
+            type: string
+          type: array
+        numbers:
+          description: The numerical values of this custom attribute. At most 400
+            values are allowed. Exactly one of text or numbers should be set.
+          example: "[2.3, 15.4] when the key is 'lengths_cm'"
+          items:
+            format: double
+            type: number
+          type: array
+        searchable:
+          description: "If true, custom attribute values are searchable by text queries\
+            \ in. search. Only set if type text set."
+          example: false
+          type: boolean
+        indexable:
+          description: "If true, custom attribute values are indexed, so that it can\
+            \ be filtered, faceted or boosted in search."
+          example: false
+          type: boolean
+      title: ProductCustomAttribute
+      type: object
+    ProductDto:
+      description: Product representation.
+      example:
+        rating: null
+        description: Eastland Shoe recalls an age of timeless casual fashion with
+          these leather boat shoes.
+        availability: IN_STOCK
+        variants:
+        - null
+        - null
+        type: "VARIANT, PRIMARY"
+        title: Eastland Shoe Men's Yarmouth Boat Shoes
+        priceInfo: null
+        availableTime: null
+        collectionMemberIds: "5"
+        sizes: "8.5"
+        fulfillmentInfos:
+        - type: pickup-in-store
+          placeIds: "6, 4, 8"
+        - type: pickup-in-store
+          placeIds: "6, 4, 8"
+        retrievableFields: null
+        id: "12345678901"
+        categories: "Men, Men > Shoes"
+        availableQuantity: 10
+        publishTime: null
+        gtin: "10614141999993"
+        images:
+        - width: 150
+          uri: https://storage.googleapis.com/poc_apparel/images/1/optimized/3412471_fpx.tif
+          height: 150
+        - width: 150
+          uri: https://storage.googleapis.com/poc_apparel/images/1/optimized/3412471_fpx.tif
+          height: 150
+        audience: null
+        brands: Eastland Shoe
+        patterns: paisley
+        languageCode: en-US
+        uri: https://s4r-apparel.groupby.cloud/product/Eastland-Shoe-Men's-Yarmouth-Boat-Shoes/2725066/94352309386
+        primaryProductId: "1234567"
+        tags: Any string.
+        promotions:
+        - promotionId: id0LikeThis
+        - promotionId: id0LikeThis
+        materials: leather
+        name: projects/123456789012/locations/global/catalogs/default_catalog/branches/1/products/12345678901
+        attributes: "{ 'vendor': {'text': ['vendor123', 'vendor456']}, 'lengths_cm':\
+          \ {'numbers':[2.3, 15.4]}, 'heights_cm': {'numbers':[8.1, 6.4]}}"
+        colorInfo: null
+        conditions: new
+      properties:
+        name:
+          description: Relative path to product in Google Retail system.
+          example: projects/123456789012/locations/global/catalogs/default_catalog/branches/1/products/12345678901
+          type: string
+        id:
+          description: Product id in Google Retail system.
+          example: "12345678901"
+          type: string
+        type:
+          description: "Product type. Possible values: PRIMARY, VARIANT. If the product\
+            \ has variant list and the request specifies the variantIds, requested\
+            \ variants will be the first in the response."
+          example: "VARIANT, PRIMARY"
+          type: string
+        primaryProductId:
+          description: Product ID that is primary in relation to the current one
+          example: "1234567"
+          type: string
+        collectionMemberIds:
+          description: The of the collection members when product type is COLLECTION
+          example: "5"
+          items:
+            type: string
+          type: array
+        gtin:
+          description: "Global Trade Item Number can be used by a company to uniquely\
+            \ identify all of its trade items.GTIN defines trade items as products\
+            \ or services that are priced, ordered or invoiced at any point in the\
+            \ supply chain."
+          example: "10614141999993"
+          type: string
+        categories:
+          description: Product categories (array).
+          example: "Men, Men > Shoes"
+          items:
+            type: string
+          type: array
+        title:
+          description: Product title.
+          example: Eastland Shoe Men's Yarmouth Boat Shoes
+          type: string
+        brands:
+          description: Product brands.
+          example: Eastland Shoe
+          items:
+            type: string
+          type: array
+        description:
+          description: Product description.
+          example: Eastland Shoe recalls an age of timeless casual fashion with these
+            leather boat shoes.
+          type: string
+        languageCode:
+          description: "Language of the title/description and other string attributes.\
+            \ Use language tags defined by [BCP 47][https://www.rfc-editor.org/rfc/bcp/bcp47.txt].\
+            \ For product search this field is in use. It defaults to 'en-US' if unset."
+          example: en-US
+          type: string
+        attributes:
+          additionalProperties:
+            $ref: '#/components/schemas/ProductCustomAttribute'
+          description: "Highly encouraged. Extra product attributes to be included.\
+            \ For example, for products, this could include the store name, vendor,\
+            \ style, color, etc. These are very strong signals for recommendation\
+            \ model, thus we highly recommend providing the attributes here. Features\
+            \ that can take on one of a limited number of possible values. Two types\
+            \ of features can be set are: Textual features. some examples would be\
+            \ the brand/maker of a product, or country of a customer. Numerical features.\
+            \ Some examples would be the height/weight of a product, or age of a customer.\
+            \  Max entries count: 200. Length limit of 128 characters."
+          example: "{ 'vendor': {'text': ['vendor123', 'vendor456']}, 'lengths_cm':\
+            \ {'numbers':[2.3, 15.4]}, 'heights_cm': {'numbers':[8.1, 6.4]}}"
+          type: object
+        tags:
+          description: Product tags (array).
+          example: Any string.
+          items:
+            type: string
+          type: array
+        priceInfo:
+          $ref: '#/components/schemas/ProductDto_priceInfo'
+        rating:
+          $ref: '#/components/schemas/ProductDto_rating'
+        availableTime:
+          $ref: '#/components/schemas/ProductDto_availableTime'
+        availability:
+          description: The online availability of the product. Default to IN_STOCK
+          example: IN_STOCK
+          type: string
+        availableQuantity:
+          description: The available quantity of the item.
+          example: 10
+          format: int32
+          type: integer
+        fulfillmentInfos:
+          description: "Fulfillment information, such as the store IDs for in-store\
+            \ pickup or region IDs for different shipping methods."
+          items:
+            $ref: '#/components/schemas/FulfillmentInfo'
+          type: array
+        uri:
+          description: Link to the appropriate product.
+          example: https://s4r-apparel.groupby.cloud/product/Eastland-Shoe-Men's-Yarmouth-Boat-Shoes/2725066/94352309386
+          type: string
+        images:
+          description: Product Image.
+          items:
+            $ref: '#/components/schemas/Image'
+          type: array
+        audience:
+          $ref: '#/components/schemas/ProductDto_audience'
+        colorInfo:
+          $ref: '#/components/schemas/ProductDto_colorInfo'
+        sizes:
+          description: Product sizes (array).
+          example: "8.5"
+          items:
+            type: string
+          type: array
+        materials:
+          description: "The material of the product. For example, 'leather', 'wooden'.\
+            \ A maximum of 20 values are allowed. Length limit of 128 characters"
+          example: leather
+          items:
+            type: string
+          type: array
+        patterns:
+          description: "The pattern or graphic print of the product. For example,\
+            \ 'striped', 'polka dot', 'paisley'. A maximum of 20 values are allowed\
+            \ per product. Length limit of 128 characters."
+          example: paisley
+          items:
+            type: string
+          type: array
+        conditions:
+          description: "The condition of the product. Strongly encouraged to use the\
+            \ standardvalues: 'new', 'refurbished', 'used'. A maximum of 5 values\
+            \ are allowed per product. Length limit of 128 characters."
+          example: new
+          items:
+            type: string
+          type: array
+        publishTime:
+          $ref: '#/components/schemas/ProductDto_publishTime'
+        retrievableFields:
+          $ref: '#/components/schemas/ProductDto_retrievableFields'
+        promotions:
+          description: The promotions applied to the product. A maximum of 10 values
+            are allowed per product.
+          items:
+            $ref: '#/components/schemas/Promotion'
+          type: array
+        variants:
+          description: "If the product has variant list and the request specifies\
+            \ the variantIds, requested variants will be the first in the response."
+          items:
+            $ref: '#/components/schemas/ProductDto'
+          type: array
+      title: Product
+      type: object
+    Promotion:
+      description: The promotions applied to the product. A maximum of 10 values are
+        allowed per product.
+      example:
+        promotionId: id0LikeThis
+      properties:
+        promotionId:
+          description: "ID of the promotion. For example, 'free gift'. Length limit\
+            \ of 128 characters."
+          example: id0LikeThis
+          type: string
+      title: Promotion
+      type: object
+    QueryPatternTrigger:
+      properties:
+        type:
+          $ref: '#/components/schemas/QueryPatternTrigger.Type'
+        values:
+          items:
+            type: string
+          type: array
+        patterns:
+          items:
+            $ref: '#/components/schemas/Pattern'
+          type: array
+      required:
+      - type
+      type: object
+    QueryPatternTrigger.Type:
+      enum:
+      - CONTAINS
+      - ENDS_WITH
+      - REGEX
+      - STARTS_WITH
+      - MATCHES
+      type: string
+    Range:
+      properties:
+        low:
+          format: double
+          type: number
+        high:
+          format: double
+          type: number
+      required:
+      - high
+      - low
+      type: object
+    RangeFilter:
+      properties:
+        field:
+          description: Field the range applies to.
+          type: string
+        range:
+          description: Range of values the field value can be.
+      required:
+      - field
+      - range
+      type: object
+    Rating:
+      description: The rating of this product.
+      properties:
+        ratingCount:
+          description: The total number of ratings. This value is independent of the
+            value of histogram.This value must be nonnegative.
+          example: 5
+          format: int32
+          type: integer
+        averageRating:
+          description: The average rating of the product. The rating is scaled at
+            1-5.
+          example: 4.5
+          format: float
+          type: number
+        ratingHistogram:
+          description: "List of rating counts per rating value (index = rating - 1).\
+            \ The list is empty if there is no rating. If the list is non-empty, its\
+            \ size is always 5. For example, [41, 14, 13, 47, 303]. It means that\
+            \ the product got 41 ratings with 1 star, 14 ratings with 2 star, and\
+            \ so on."
+          example: "[41, 14, 13, 47, 303]"
+          items:
+            format: int32
+            type: integer
+          type: array
+      title: Rating
+      type: object
+    RecordDto:
+      description: Information regarding a product in the proprietary Group By API
+        format.
+      example:
+        _t: 3/4 length shorts
+        _u: http://apparel1productsClothing.com/12345
+        allMeta:
+          key: ""
+        _id: 2cfcf5443046e6733a40608af8a35c95
+        collection: productsClothing
+      properties:
+        _id:
+          description: Identifier of the record as an MD5 hash.
+          example: 2cfcf5443046e6733a40608af8a35c95
+          type: string
+        _u:
+          description: Logical URL of the record.
+          example: http://apparel1productsClothing.com/12345
+          type: string
+        _t:
+          description: Title of the record.
+          example: 3/4 length shorts
+          type: string
+        collection:
+          description: Collection the record was queried from or resides.
+          example: productsClothing
+          type: string
+        allMeta:
+          additionalProperties: true
+          description: "All other metadata, read fields, the record has."
+          type: object
+      title: Record
+      type: object
+    Refinement:
+      properties:
+        value:
+          type: string
+        priority:
+          format: int32
+          type: integer
+      required:
+      - priority
+      - value
+      type: object
+    RefinementDto:
+      description: Refinement value or range in the navigation.
+      example:
+        high: 100
+        low: 50
+        count: 189
+        type: null
+        value: Surf's Up
+      properties:
+        type:
+          $ref: '#/components/schemas/NavigationTypeDto'
+        count:
+          description: Number of products which match this refinement value or range.
+          example: 189
+          format: int64
+          type: integer
+        value:
+          description: Value of the refinement.
+          example: Surf's Up
+          type: string
+        low:
+          description: Lower bound of the refinement range.
+          example: 50
+          format: double
+          type: number
+        high:
+          description: Upper bound  of the refinement range.
+          example: 100
+          format: double
+          type: number
+      required:
+      - type
+      title: Refinement
+      type: object
+    RuleConfiguration:
+      properties:
+        ruleInExperiment:
+          type: boolean
+        id:
+          format: int32
+          type: integer
+        name:
+          type: string
+        areaId:
+          format: int32
+          type: integer
+        priority:
+          format: int32
+          type: integer
+        enabled:
+          type: boolean
+        activeHoursEnabled:
+          type: boolean
+        activeFrom:
+          format: int64
+          type: integer
+        activeTo:
+          format: int64
+          type: integer
+        triggerSets:
+          items:
+            $ref: '#/components/schemas/TriggerSet'
+          type: array
+        biasingProfileName:
+          type: string
+        sort:
+          $ref: '#/components/schemas/Sort'
+        includedNavigations:
+          items:
+            type: string
+          type: array
+        valueFilters:
+          items:
+            $ref: '#/components/schemas/ValueFilter'
+          type: array
+        searchFilters:
+          items:
+            $ref: '#/components/schemas/SearchFilter'
+          type: array
+        rangeFilters:
+          items:
+            $ref: '#/components/schemas/RangeFilter'
+          type: array
+        template:
+          $ref: '#/components/schemas/RuleTemplate'
+        boostedProductBuckets:
+          items:
+            $ref: '#/components/schemas/BoostedProductBucket'
+          nullable: true
+          type: array
+        pinnedRefinements:
+          items:
+            $ref: '#/components/schemas/PinnedRefinement'
+          type: array
+        messageType:
+          $ref: '#/components/schemas/MessageType'
+        type:
+          $ref: '#/components/schemas/RuleType'
+        variants:
+          items:
+            $ref: '#/components/schemas/ExperimentVariant'
+          type: array
+      required:
+      - activeFrom
+      - activeHoursEnabled
+      - activeTo
+      - areaId
+      - biasingProfileName
+      - boostedProductBuckets
+      - enabled
+      - id
+      - includedNavigations
+      - messageType
+      - name
+      - pinnedRefinements
+      - priority
+      - rangeFilters
+      - searchFilters
+      - sort
+      - template
+      - triggerSets
+      - type
+      - valueFilters
+      - variants
+      type: object
+    RuleTemplate:
+      properties:
+        name:
+          type: string
+        enableExactMatching:
+          type: boolean
+        sections:
+          items:
+            $ref: '#/components/schemas/RuleTemplateSection'
+          type: array
+      required:
+      - enableExactMatching
+      - name
+      - sections
+      type: object
+    RuleTemplateSection:
+      properties:
+        zoneId:
+          format: int32
+          type: integer
+        name:
+          type: string
+        zoneContent:
+          type: string
+        zoneType:
+          $ref: '#/components/schemas/ZoneType'
+      required:
+      - name
+      - zoneContent
+      - zoneId
+      - zoneType
+      type: object
+    RuleType:
+      enum:
+      - REGULAR
+      - EXPERIMENT
+      type: string
+    RuleVariant:
+      properties:
+        biasingProfileName:
+          type: string
+        includedNavigations:
+          items:
+            type: string
+          type: array
+        template:
+          $ref: '#/components/schemas/RuleTemplate'
+        boostedProductBuckets:
+          items:
+            $ref: '#/components/schemas/BoostedProductBucket'
+          type: array
+        pinnedRefinements:
+          items:
+            $ref: '#/components/schemas/PinnedRefinement'
+          type: array
+        sort:
+          $ref: '#/components/schemas/Sort'
+        valueFilters:
+          items:
+            $ref: '#/components/schemas/ValueFilter'
+          type: array
+        searchFilters:
+          items:
+            $ref: '#/components/schemas/SearchFilter'
+          type: array
+        rangeFilters:
+          items:
+            $ref: '#/components/schemas/RangeFilter'
+          type: array
+      required:
+      - biasingProfileName
+      - boostedProductBuckets
+      - includedNavigations
+      - pinnedRefinements
+      - rangeFilters
+      - searchFilters
+      - sort
+      - template
+      - valueFilters
+      type: object
+    SearchFilter:
+      properties:
+        value:
+          description: String to be appended to the search query.
+          type: string
+      required:
+      - value
+      type: object
+    SearchMetadataDto:
+      description: "Metadata relating to the search results, or how they were generated."
+      example:
+        totalTime: 153
+        cached: false
+        searchAttributionToken: NtQKDAjYrrGEBhCWs_v3AhABGiQ2MDlhNjA5Yy0wMDAwLTI2ZDctODQ0OS1mNGY1ZTgwODc1YjQ
+      properties:
+        searchAttributionToken:
+          description: Token to assist beacon collectors in correlating searches to
+            user events.
+          example: NtQKDAjYrrGEBhCWs_v3AhABGiQ2MDlhNjA5Yy0wMDAwLTI2ZDctODQ0OS1mNGY1ZTgwODc1YjQ
+          nullable: true
+          type: string
+        cached:
+          description: Were the search results from a previous call.
+          example: false
+          type: boolean
+        totalTime:
+          description: Total time spent performing the Google search in milliseconds.
+          example: 153
+          format: int64
+          type: integer
+      title: Search Metadata
+      type: object
+    SearchRequestDto:
+      description: "Request that should be populated to configure a search API call,\
+        \ made by the client on behalf of a shopper."
+      example:
+        overwrites: null
+        preFilter: "(categories:ANY(\"Men\")) AND (ageGroups:ANY(\"adult\")) AND (price:\
+          \ IN(150, 200))"
+        loginId: loginId
+        pinUnexpandedResults: true
+        dynamicFacet: true
+        responseMask: "[\"key.innerKey.value\", \"key2\", \"key.innerKey2.value2\"\
+          ]"
+        pageSize: 25
+        skip: 50
+        excludedNavigations:
+        - excludedNavigations
+        - excludedNavigations
+        customUrlParams:
+        - value: easter-2021
+          key: landing-page
+        - value: easter-2021
+          key: landing-page
+        biasing:
+          biases:
+          - field: colorFamilies
+            strength: null
+            content: Red
+          - field: colorFamilies
+            strength: null
+            content: Red
+        sorts:
+        - field: rating
+          order: Ascending
+        - field: rating
+          order: Ascending
+        includeExpandedResults: true
+        area: Production
+        debug: true
+        query: blue sweater
+        spellCorrectionMode: ""
+        facetLimit: 0
+        collection: productsClothing
+        refinements:
+        - navigationName: brands
+          high: 100
+          or: false
+          low: 50
+          source: Dynamic
+          type: ""
+          value: value
+        - navigationName: brands
+          high: 100
+          or: false
+          low: 50
+          source: Dynamic
+          type: ""
+          value: value
+        variantRollupKeys:
+        - variantRollupKeys
+        - variantRollupKeys
+        pageCategories: "[\"Sales > 2017 Black Friday Deals\"]"
+        includedNavigations:
+        - includedNavigations
+        - includedNavigations
+        site: site
+        biasingProfile: biasingProfile
+        visitorId: 38400000-8cf0-11bd-b23e-10b96e40000d
+      properties:
+        query:
+          description: Base textual search query.
+          example: blue sweater
+          nullable: true
+          type: string
+        area:
+          default: Production
+          description: Area name the search is being performed in.
+          example: Production
+          nullable: true
+          type: string
+        collection:
+          default: default
+          description: Name of collection in project configuration setting which is
+            mapped to the google retail backend.
+          example: productsClothing
+          nullable: true
+          type: string
+        visitorId:
+          description: Unique identifier identifying the shopper. Will be autogenerated
+            if not provided.
+          example: 38400000-8cf0-11bd-b23e-10b96e40000d
+          nullable: true
+          type: string
+        refinements:
+          items:
+            $ref: '#/components/schemas/SelectedRefinementDto'
+          type: array
+        pageSize:
+          default: 10
+          description: The number of products to be returned on each page.
+          example: 25
+          format: int32
+          minimum: 0
+          nullable: true
+          type: integer
+        skip:
+          default: 0
+          description: Where in the list of products to begin the page.
+          example: 50
+          format: int64
+          minimum: 0
+          nullable: true
+          type: integer
+        biasingProfile:
+          description: Name of a biasing profile which should be applied to the search.
+            Takes priority over area default.
+          nullable: true
+          type: string
+        biasing:
+          $ref: '#/components/schemas/BiasingProfileDto'
+        customUrlParams:
+          items:
+            $ref: '#/components/schemas/CustomParameterDto'
+          type: array
+        sorts:
+          items:
+            $ref: '#/components/schemas/SortDto'
+          type: array
+        includedNavigations:
+          description: Set of navigation fields to include in the search result. Cannot
+            be set if 'excludedNavigations' is set.
+          items:
+            type: string
+          nullable: true
+          type: array
+        excludedNavigations:
+          description: Set of navigation fields to exclude in the search result. Cannot
+            be set if 'includedNavigations' is set.
+          items:
+            type: string
+          nullable: true
+          type: array
+        dynamicFacet:
+          description: Set the specifications of dynamically generated facets.
+          nullable: true
+          type: boolean
+        variantRollupKeys:
+          description: Set the variant rollup keys.
+          externalDocs:
+            description: Google reference
+            url: https://cloud.google.com/retail/docs/reference/rest/v2/projects.locations.catalogs.placements/search#body.request_body.FIELDS.variant_rollup_keys
+          items:
+            type: string
+          nullable: true
+          type: array
+        preFilter:
+          description: Set of the prefilter specifications value.
+          example: "(categories:ANY(\"Men\")) AND (ageGroups:ANY(\"adult\")) AND (price:\
+            \ IN(150, 200))"
+          externalDocs:
+            description: Google reference
+            url: https://cloud.google.com/retail/docs/filter-and-order#filter
+          nullable: true
+          type: string
+        site:
+          description: "Name of site filter. If not specified, the specified area's\
+            \ default site will be applied if configured in Command Center. To not\
+            \ use default specify empty value i.e.\"\".  If the site doesn't exist\
+            \ then the search will execute without the site filter and a warning will\
+            \ be provided."
+          nullable: true
+          type: string
+        responseMask:
+          description: List with fields which should be included in metadata object
+            associated with each record in response.
+          example: "[\"key.innerKey.value\", \"key2\", \"key.innerKey2.value2\"]"
+          items:
+            type: string
+          nullable: true
+          type: array
+        pageCategories:
+          description: "The categories associated with a category page. Required for\
+            \ category navigation queries to achieve good search quality. To represent\
+            \ full path of category, use '>' sign to separate different hierarchies.\
+            \ If '>' is part of the category name, please replace it with other character(s).Max\
+            \ item length = 1."
+          example: "[\"Sales > 2017 Black Friday Deals\"]"
+          items:
+            type: string
+          nullable: true
+          type: array
+        spellCorrectionMode:
+          allOf:
+          - $ref: '#/components/schemas/SpellCorrectionMode'
+          - description: The specification for query spell correction. This defaults
+              to AUTO. AUTO - Automatic spell correction built by Google Retail placements.search.
+              placements.search will be based on the corrected query if found. SUGGESTION_ONLY
+              - Google Retail placements.search will try to find a spell suggestion
+              if there is any and put in the SearchResponse.corrected_query. The spell
+              suggestion will not be used as the search query.
+          nullable: true
+        includeExpandedResults:
+          description: "When a shopper uses an ambiguous or a multi-word search phrase,\
+            \ they can get an empty response. After turning on include expanded results,\
+            \ Retail Search analyzes the request and returns the expanded list of\
+            \ products based on the parsed search query. For example, if you search\
+            \ \"Google Pixel 5\" without query expansion, you might only get \"google_pixel_5\"\
+            \ in the result. With query expansion, you might get \"google_pixel_4a_with_5g\"\
+            , \"google_pixel_4a\" and \"google_pixel_5_case\" as well.The default\
+            \ value is configured in the tenant settings or true if there is no such\
+            \ setting"
+          nullable: true
+          type: boolean
+        pinUnexpandedResults:
+          description: "This configuration depends on include expanded results settings.\
+            \ If this field is set to true,unexpanded products are always at the top\
+            \ of the search results, followed  by the expanded results. Default value:\
+            \ true"
+          nullable: true
+          type: boolean
+        debug:
+          description: |+
+            Enable additional debug info in response.
+
+            Note: attaching debug info significantly affects performance.
+            Is not supposed to be used for large requests.
+
+          nullable: true
+          type: boolean
+        facetLimit:
+          description: |
+            Maximum of facet values that should be returned for this facet. If not specified, defaults to 20.
+            The maximum allowed value is 300. Values above 300 will be coerced to 300.
+
+            If this field is negative, an INVALID_ARGUMENT is returned.
+
+            This limit (300) is configured on Google side, but Google have an ability to change it for specific project.
+          format: int32
+          nullable: true
+          type: integer
+        loginId:
+          description: |
+            Highly recommended for logged-in users. Unique identifier for logged-in user,
+            such as a user name. Don't set for anonymous users.
+
+            Don't set the field to the same fixed ID for different users. This mixes
+            the event history of those users together, which results in degraded
+            model quality.
+
+            The field must be a UTF-8 encoded string with a length limit of 128
+            characters.
+          nullable: true
+          type: string
+        overwrites:
+          $ref: '#/components/schemas/SearchRequestDto_overwrites'
+      required:
+      - biasing
+      - customUrlParams
+      - refinements
+      - sorts
+      title: Search Request
+      type: object
+    SearchResponseDto:
+      description: "Response of calling the search API, including various elements\
+        \ of the original request context, matching records and general metadata relating\
+        \ to the results."
+      example:
+        area: Production
+        selectedNavigation:
+        - metadata:
+          - value: value
+            key: key
+          - value: value
+            key: key
+          or: true
+          displayName: Brand
+          name: brands
+          placeId: placeId
+          source: source
+          type: null
+          refinements:
+          - high: 100
+            low: 50
+            count: 189
+            type: null
+            value: Surf's Up
+          - high: 100
+            low: 50
+            count: 189
+            type: null
+            value: Surf's Up
+        - metadata:
+          - value: value
+            key: key
+          - value: value
+            key: key
+          or: true
+          displayName: Brand
+          name: brands
+          placeId: placeId
+          source: source
+          type: null
+          refinements:
+          - high: 100
+            low: 50
+            count: 189
+            type: null
+            value: Surf's Up
+          - high: 100
+            low: 50
+            count: 189
+            type: null
+            value: Surf's Up
+        redirect: www.example.com/2021-deals
+        template:
+          name: default
+          ruleName: Easter Sale 2021
+          zones:
+          - name: any string
+            richContent: any string
+            type: ""
+            content: any string
+          - name: any string
+            richContent: any string
+            type: ""
+            content: any string
+          triggerSet: null
+        metadata:
+          totalTime: 153
+          cached: false
+          searchAttributionToken: NtQKDAjYrrGEBhCWs_v3AhABGiQ2MDlhNjA5Yy0wMDAwLTI2ZDctODQ0OS1mNGY1ZTgwODc1YjQ
+        debug:
+          rawSearchRequest:
+          - "{}"
+          - "{}"
+          rawSearchResponse:
+          - "{}"
+          - "{}"
+        records:
+        - _t: 3/4 length shorts
+          _u: http://apparel1productsClothing.com/12345
+          allMeta:
+            key: ""
+          _id: 2cfcf5443046e6733a40608af8a35c95
+          collection: productsClothing
+        - _t: 3/4 length shorts
+          _u: http://apparel1productsClothing.com/12345
+          allMeta:
+            key: ""
+          _id: 2cfcf5443046e6733a40608af8a35c95
+          collection: productsClothing
+        redirectMetadata:
+        - value: value
+          key: key
+        - value: value
+          key: key
+        query: blue swetter
+        experiments:
+        - experimentVariant: Variant A
+          experimentId: experiment_variant_name
+        - experimentVariant: Variant A
+          experimentId: experiment_variant_name
+        warnings:
+        - warnings
+        - warnings
+        pageInfo:
+          recordStart: 50
+          recordEnd: 75
+        facetLimit: 6
+        totalRecordCount: 273
+        empty: true
+        filter: filter
+        originalRequest:
+          overwrites: null
+          preFilter: "(categories:ANY(\"Men\")) AND (ageGroups:ANY(\"adult\")) AND\
+            \ (price: IN(150, 200))"
+          loginId: loginId
+          pinUnexpandedResults: true
+          dynamicFacet: true
+          responseMask: "[\"key.innerKey.value\", \"key2\", \"key.innerKey2.value2\"\
+            ]"
+          pageSize: 25
+          skip: 50
+          excludedNavigations:
+          - excludedNavigations
+          - excludedNavigations
+          customUrlParams:
+          - value: easter-2021
+            key: landing-page
+          - value: easter-2021
+            key: landing-page
+          biasing:
+            biases:
+            - field: colorFamilies
+              strength: null
+              content: Red
+            - field: colorFamilies
+              strength: null
+              content: Red
+          sorts:
+          - field: rating
+            order: Ascending
+          - field: rating
+            order: Ascending
+          includeExpandedResults: true
+          area: Production
+          debug: true
+          query: blue sweater
+          spellCorrectionMode: ""
+          facetLimit: 0
+          collection: productsClothing
+          refinements:
+          - navigationName: brands
+            high: 100
+            or: false
+            low: 50
+            source: Dynamic
+            type: ""
+            value: value
+          - navigationName: brands
+            high: 100
+            or: false
+            low: 50
+            source: Dynamic
+            type: ""
+            value: value
+          variantRollupKeys:
+          - variantRollupKeys
+          - variantRollupKeys
+          pageCategories: "[\"Sales > 2017 Black Friday Deals\"]"
+          includedNavigations:
+          - includedNavigations
+          - includedNavigations
+          site: site
+          biasingProfile: biasingProfile
+          visitorId: 38400000-8cf0-11bd-b23e-10b96e40000d
+        siteParams:
+        - value: value
+          key: key
+        - value: value
+          key: key
+        correctedQuery: blue sweater
+        biasingProfile: Query
+        availableNavigation:
+        - metadata:
+          - value: value
+            key: key
+          - value: value
+            key: key
+          or: true
+          displayName: Brand
+          name: brands
+          placeId: placeId
+          source: source
+          type: null
+          refinements:
+          - high: 100
+            low: 50
+            count: 189
+            type: null
+            value: Surf's Up
+          - high: 100
+            low: 50
+            count: 189
+            type: null
+            value: Surf's Up
+        - metadata:
+          - value: value
+            key: key
+          - value: value
+            key: key
+          or: true
+          displayName: Brand
+          name: brands
+          placeId: placeId
+          source: source
+          type: null
+          refinements:
+          - high: 100
+            low: 50
+            count: 189
+            type: null
+            value: Surf's Up
+          - high: 100
+            low: 50
+            count: 189
+            type: null
+            value: Surf's Up
+        id: 1d7dc797-e1cb-49dc-8791-f2317a218f13
+        biasingProfileAppliedId: 1
+        includeExpandedResults: true
+      properties:
+        id:
+          description: Unique identifier for the search.
+          example: 1d7dc797-e1cb-49dc-8791-f2317a218f13
+          type: string
+        area:
+          description: Area Id the search was performed in.
+          example: Production
+          type: string
+        query:
+          description: Original search query.
+          example: blue swetter
+          type: string
+        correctedQuery:
+          description: Search query after any changes/corrections are done by the
+            engine.
+          example: blue sweater
+          type: string
+        biasingProfile:
+          description: Name of the biasing profile which was used to bias products
+            in the search results.
+          example: Query
+          type: string
+        biasingProfileAppliedId:
+          description: Id of the biasing profile which was used to bias products in
+            the search results.
+          example: 1
+          format: int32
+          type: integer
+        filter:
+          type: string
+        originalRequest:
+          $ref: '#/components/schemas/SearchRequestDto'
+        records:
+          description: The list of records that match the search.
+          items:
+            $ref: '#/components/schemas/RecordDto'
+          type: array
+        totalRecordCount:
+          description: The total number of products that match the search. If all
+            products were filtered out on S4R site equals to 0.
+          example: 273
+          format: int64
+          type: integer
+        metadata:
+          $ref: '#/components/schemas/SearchMetadataDto'
+        pageInfo:
+          $ref: '#/components/schemas/PageInfoDto'
+        availableNavigation:
+          items:
+            $ref: '#/components/schemas/NavigationDto'
+          type: array
+        selectedNavigation:
+          items:
+            $ref: '#/components/schemas/NavigationDto'
+          type: array
+        redirect:
+          description: URL to which the merchandiser should redirect the shopper to.
+          example: www.example.com/2021-deals
+          type: string
+        experiments:
+          items:
+            $ref: '#/components/schemas/Experiment'
+          type: array
+        template:
+          $ref: '#/components/schemas/TemplateDto'
+        empty:
+          description: "True if the search yielded no results, otherwise false."
+          type: boolean
+        siteParams:
+          items:
+            $ref: '#/components/schemas/Metadata'
+          type: array
+        debug:
+          $ref: '#/components/schemas/DebugDto'
+        warnings:
+          description: "Warning messages containing information about invalid products,\
+            \ etc."
+          items:
+            type: string
+          type: array
+        includeExpandedResults:
+          description: "When a shopper uses an ambiguous or a multi-word search phrase,\
+            \ they can get an empty response. After turning on include expanded results,\
+            \ Retail Search analyzes the request and returns the expanded list of\
+            \ products based on the parsed search query. For example, if you search\
+            \ \"Google Pixel 5\" without query expansion, you might only get \"google_pixel_5\"\
+            \ in the result. With query expansion, you might get \"google_pixel_4a_with_5g\"\
+            , \"google_pixel_4a\" and \"google_pixel_5_case\" as well.The default\
+            \ value is configured in the tenant settings or true if there is no such\
+            \ setting"
+          type: boolean
+        facetLimit:
+          description: |
+            Maximum of facet values that should be returned for this facet. If not specified, defaults to 20.
+            The maximum allowed value is 300. Values above 300 will be coerced to 300.
+
+            If this field is negative, an INVALID_ARGUMENT is returned.
+
+            This limit (300) is configured on Google side, but Google have an ability to change it for specific project.
+          format: int32
+          type: integer
+        redirectMetadata:
+          items:
+            $ref: '#/components/schemas/Metadata'
+          type: array
+      required:
+      - availableNavigation
+      - debug
+      - experiments
+      - filter
+      - metadata
+      - originalRequest
+      - pageInfo
+      - redirectMetadata
+      - selectedNavigation
+      - siteParams
+      - template
+      title: Search Response
+      type: object
+    SelectedRefinementDto:
+      description: Refinement the shopper has selected for filtering.
+      example:
+        navigationName: brands
+        high: 100
+        or: false
+        low: 50
+        source: Dynamic
+        type: ""
+        value: value
+      properties:
+        navigationName:
+          description: The name of the navigation the refinement is for.
+          example: brands
+          type: string
+        type:
+          allOf:
+          - $ref: '#/components/schemas/NavigationTypeDto'
+          - description: The type of the navigation the refinement is for.
+        value:
+          description: "Value of selected refinement, if type is value."
+          type: string
+        low:
+          description: "The lowest end or value of the range, if applicable."
+          example: 50
+          format: double
+          type: number
+        high:
+          description: "The highest end or value of the range, if applicable."
+          example: 100
+          format: double
+          type: number
+        source:
+          description: Field which is indicated that it is dynamic navigation.
+          example: Dynamic
+          type: string
+        or:
+          description: Navigation multiselect. Indicate that it is possibly to select
+            more than one navigation value due to search request.
+          example: false
+          type: boolean
+      required:
+      - navigationName
+      - type
+      title: Selected Refinement
+      type: object
+    SelectedRefinementTrigger:
+      properties:
+        field:
+          type: string
+        value:
+          type: string
+        range:
+          $ref: '#/components/schemas/Range'
+        type:
+          $ref: '#/components/schemas/SelectedRefinementTrigger.Type'
+      required:
+      - field
+      - range
+      - type
+      - value
+      type: object
+    SelectedRefinementTrigger.Type:
+      enum:
+      - RANGE
+      - VALUE
+      - NAVIGATION_SELECTED
+      type: string
+    Sort:
+      properties:
+        field:
+          description: Field the order will be applied to.
+          type: string
+        order:
+          description: OrderDto the products will appear in.
+      required:
+      - field
+      - order
+      type: object
+    SortDto:
+      description: Order the returned products should appear on the page.
+      example:
+        field: rating
+        order: Ascending
+      properties:
+        field:
+          description: Field the order will be applied to.
+          example: rating
+          type: string
+        order:
+          $ref: '#/components/schemas/SortDto.OrderDto'
+      required:
+      - field
+      - order
+      title: Sort
+      type: object
+    SortDto.OrderDto:
+      description: Order the products will appear in
+      enum:
+      - Ascending
+      - Descending
+      example: Ascending
+      nullable: true
+      title: Order
+      type: string
+    SpellCorrectionMode:
+      enum:
+      - AUTO
+      - SUGGESTION_ONLY
+      type: string
+    TemplateDto:
+      description: "Template to assist the front end application in rendering the\
+        \ UI. Currently only the triggered rule name will be included, or the 'default'\
+        \ template name to indicate no rule was triggered. This is to mainly compatibility\
+        \ with the Searchandiser API and the addition of templates in the future.\
+        \ Template is search agnostic and do not affect search request or result.\
+        \ Templated selected only by triggered rule."
+      example:
+        name: default
+        ruleName: Easter Sale 2021
+        zones:
+        - name: any string
+          richContent: any string
+          type: ""
+          content: any string
+        - name: any string
+          richContent: any string
+          type: ""
+          content: any string
+        triggerSet: null
+      properties:
+        name:
+          description: Name of the template.
+          example: default
+          type: string
+        ruleName:
+          description: Name of the rule which may have triggered.
+          example: Easter Sale 2021
+          type: string
+        triggerSet:
+          $ref: '#/components/schemas/TemplateDto_triggerSet'
+        zones:
+          description: Zones for linked template.
+          items:
+            $ref: '#/components/schemas/ZoneDto'
+          type: array
+      title: Template
+      type: object
+    Timestamp:
+      description: Timestamp info with seconds and nanos.
+      properties:
+        seconds:
+          description: Timestamp seconds.
+          example: 100
+          format: int64
+          type: integer
+        nanos:
+          description: Timestamp nanos.
+          example: 100
+          format: int32
+          type: integer
+      title: Timestamp
+      type: object
+    TriggerSet:
+      properties:
+        queryPatternTriggers:
+          description: Query pattern triggers.
+          items:
+            $ref: '#/components/schemas/QueryPatternTrigger'
+          type: array
+        selectedRefinementTriggers:
+          description: Selected refinement triggers.
+          items:
+            $ref: '#/components/schemas/SelectedRefinementTrigger'
+          type: array
+        customParameterTriggers:
+          description: Custom parameter triggers.
+          items:
+            $ref: '#/components/schemas/CustomParameterTrigger'
+          type: array
+      required:
+      - customParameterTriggers
+      - queryPatternTriggers
+      - selectedRefinementTriggers
+      type: object
+    ValueFilter:
+      properties:
+        field:
+          description: Field the value applies to.
+          type: string
+        value:
+          description: Value to filter on.
+          type: string
+        numberValue:
+          description: Numeric value to filter on.
+          format: double
+          type: number
+        exclude:
+          description: "Describing whether the filter is negated or not: color that\
+            \ is NOT red."
+          type: boolean
+        type:
+          description: Determine which field we need to use - value if 'TEXTUAL' type
+            or numberValue if 'NUMERIC' type.
+      required:
+      - exclude
+      - field
+      - numberValue
+      - type
+      - value
+      type: object
+    ValueFilter.ValueFilterType:
+      enum:
+      - TEXTUAL
+      - NUMERIC
+      type: string
+    ZoneDto:
+      description: "UI zones, that may contain code snippets, sub-searches and etc."
+      example:
+        name: any string
+        richContent: any string
+        type: ""
+        content: any string
+      properties:
+        name:
+          description: "A name for the zone, ideally human-readable."
+          example: any string
+          type: string
+        type:
+          allOf:
+          - $ref: '#/components/schemas/ZoneDtoType'
+          - description: Define type of content which is can be stored in zone.
+        content:
+          description: "Zone content - it is can be any data, HTML - code, usual text\
+            \ or etc"
+          example: any string
+          type: string
+        richContent:
+          description: "Zone content - it is can be any data, HTML - code, usual text\
+            \ or etc"
+          example: any string
+          type: string
+      title: Zone
+      type: object
+    ZoneDtoType:
+      description: Define type of content which is can be stored in zone.
+      enum:
+      - Content
+      - Rich_Content
+      - Products
+      - Generated_Content
+      example: "Content, Rich_Content, Products or Generated_Content"
+      type: string
+    ZoneType:
+      enum:
+      - QUERY
+      - CONTENT
+      - RICH_CONTENT
+      - EXPECT_QUERY
+      - GENERATED_CONTENT
+      type: string
+    AdditionalInfo:
+      description: Object which is contains brands and categories associated with
+        this suggestion.
+      example:
+        brands:
+        - brands
+        - brands
+        categories:
+        - categories
+        - categories
+      properties:
+        brands:
+          items:
+            description: List of brands associated with returned suggestion.
+            type: string
+          type: array
+        categories:
+          items:
+            description: List of categories associated with returned suggestion.
+            type: string
+          type: array
+      required:
+      - brands
+      - categories
+      type: object
+    AttributeSuggestion:
+      description: Object with one single attribute and associated properties.
+      example:
+        suggestions:
+        - suggestions
+        - suggestions
+      properties:
+        suggestions:
+          description: Suggestion itself.
+          items:
+            type: string
+          type: array
+      type: object
+    ErrorResponse:
+      description: Error object returned by the API.
+      properties:
+        trackingId:
+          description: Identifier used for tracking purposes.
+          example: 2c9ea473-730e-346a-a24e-23aae0623583
+          type: string
+        method:
+          description: HTTP method of the API call which produced the error.
+          example: GET
+          type: string
+        path:
+          description: HTTP path of the API call which produced the error.
+          example: /ccapi/example/path
+          type: string
+        message:
+          description: Error message. Ideally human readable string.
+          example: "Something went wrong, please do...."
+          type: string
+      required:
+      - message
+      - method
+      - path
+      - trackingId
+      title: Base error response.
+      type: object
+    Identity:
+      properties:
+        subject:
+          type: string
+        company:
+          type: string
+        roles:
+          items:
+            $ref: '#/components/schemas/Role'
+          type: array
+      required:
+      - company
+      - roles
+      - subject
+      type: object
+    Merchandiser:
+      properties:
+        merchandiserId:
+          type: string
+      required:
+      - merchandiserId
+      type: object
+    Request:
+      description: |
+        Object which is represent autocomplete request and encapsulate all passed parameters.
+      properties:
+        area:
+          description: Area i.e. 'Production' Will not be used immediately. This will
+            be useful when we eventually need to support a US area vs a Canada area.
+            But this would require using the custom dataset instead of user-generated.
+          maxLength: 80
+          type: string
+        collection:
+          description: Name of the collection used to determine the retail backend
+            to use. Usually it is name which is associated with retail project in
+            command center (project configuration).
+          maxLength: 80
+          minLength: 1
+          type: string
+        searchItems:
+          description: Completion max suggestions. The maximum allowed max suggestions
+            is 20.
+          format: int32
+          maximum: 20
+          minimum: 1
+          type: integer
+        query:
+          description: String. Required. The query used to generate suggestions. The
+            maximum number of allowed characters is 255.
+          maxLength: 255
+          minLength: 1
+          type: string
+        enableAttributeSuggestion:
+          description: |
+            Enable attribute suggestions, by setting the field enableAttributeSuggestion=true in the API request. Then in
+            response, there will be an additional field attributeResults to show direct match results on brands/categories
+
+            Note that attribute results directly come from the products we import and Google does not apply any cleaning on
+            them.
+          type: boolean
+        extendedSuggestions:
+          description: |
+            Optional param which is define if extended suggestions will be returned in autocomplete response or not.
+            Possibly values: true, false, not specified (If not specified default collection setting will be used).
+          nullable: true
+          type: boolean
+        extendedAttributes:
+          description: |2
+                List with extended attributes which are would be returned in autocomplete response.
+                Requires extendedSuggestions to be enabled using search param or on collection layer.
+          items:
+            type: string
+          minItems: 1
+          nullable: true
+          type: array
+        visitorId:
+          description: |
+            String. Not required field. A unique identifier for tracking visitors. For example, this could be implemented
+            with an HTTP cookie, which should be able to uniquely identify a visitor on a single device. This unique
+            identifier should not change if the visitor logs in or out of the website. The field must be a UTF-8 encoded
+            string with a length limit of 128 characters. Otherwise, an INVALID_ARGUMENT error is returned.
+          maxLength: 128
+          nullable: true
+          type: string
+        site:
+          description: "Name of site filter. If not specified, the specified area's\
+            \ default site will be applied if configured in Command Center. To not\
+            \ use default specify empty value i.e.\"\".  If the site doesn't exist\
+            \ then the search will execute without the site filter."
+          nullable: true
+          type: string
+      required:
+      - area
+      - collection
+      - query
+      - searchItems
+      type: object
+    Role:
+      properties:
+        name:
+          type: string
+      required:
+      - name
+      type: object
+    SearchResults:
+      description: SAYT response. Contains list of suggestions ad base response information.
+      example:
+        stats: null
+        searchTerms:
+        - additionalInfo:
+            brands:
+            - brands
+            - brands
+            categories:
+            - categories
+            - categories
+          value: value
+        - additionalInfo:
+            brands:
+            - brands
+            - brands
+            categories:
+            - categories
+            - categories
+          value: value
+        siteFilter: siteFilter
+        attributeResults:
+          key:
+            suggestions:
+            - suggestions
+            - suggestions
+        extendedAttributes:
+          key:
+          - extendedAttributes
+          - extendedAttributes
+      properties:
+        stats:
+          $ref: '#/components/schemas/SearchResults_stats'
+        searchTerms:
+          items:
+            $ref: '#/components/schemas/SearchTerms'
+          type: array
+        extendedAttributes:
+          additionalProperties:
+            items:
+              type: string
+            type: array
+          description: |
+            Map with extended attributes which are returned in autocomplete response.
+          type: object
+        attributeResults:
+          additionalProperties:
+            $ref: '#/components/schemas/AttributeSuggestion'
+          description: SAYT response attributes. Contains list of direct matching
+            attributes.
+          type: object
+        siteFilter:
+          description: SiteFilter object used with request.
+          type: string
+      required:
+      - searchTerms
+      type: object
+    SearchTerms:
+      description: Object with one single suggestion and associated info (brands and
+        categories).
+      example:
+        additionalInfo:
+          brands:
+          - brands
+          - brands
+          categories:
+          - categories
+          - categories
+        value: value
+      properties:
+        value:
+          description: Suggestion itself.
+          type: string
+        additionalInfo:
+          $ref: '#/components/schemas/AdditionalInfo'
+      required:
+      - additionalInfo
+      type: object
+    Stats:
+      description: Object with base response information. Contains count of returned
+        suggestions and time spent to handle the request.
+      properties:
+        searchCount:
+          description: Count of suggested sentences in response.
+          format: int32
+          type: integer
+        autocompleteResponse:
+          description: Time in milliseconds taken by autocomplete service to handle
+            request and send response.
+          format: int64
+          type: integer
+        extendedAttributesCount:
+          description: Count of extended attributes in autocomplete response.
+          format: int32
+          type: integer
+        extendedAttributesResponse:
+          description: Time in milliseconds taken by application to enrich response
+            with extended attributes.
+          format: int64
+          type: integer
+      type: object
+    RecommendationsErrorResponse:
+      description: Error returned by the API.
+      properties:
+        trackingId:
+          description: Identifier used for tracking purposes.
+          example: bb25d616-2cd7-44a1-8d11-27159f2aa03c
+          type: string
+        method:
+          description: HTTP method of the API call which produced the error.
+          example: POST
+          type: string
+        path:
+          description: HTTP path of the API call which produced the error.
+          type: string
+        message:
+          description: Error message.
+          example: Search request page size must be greater than or equal to 0.
+          type: string
+      title: Error
+      type: object
+    Filter:
+      example:
+        field: field
+        exclude: true
+        value: value
+        derivedFromProduct: true
+      properties:
+        field:
+          minLength: 1
+          type: string
+        value:
+          nullable: true
+          type: string
+        exclude:
+          type: boolean
+        derivedFromProduct:
+          type: boolean
+      required:
+      - derivedFromProduct
+      - exclude
+      - field
+      type: object
+    FilterParameter:
+      example:
+        field: field
+        exclude: true
+        value: value
+        derivedFromProduct: true
+      properties:
+        field:
+          minLength: 1
+          type: string
+        value:
+          nullable: true
+          type: string
+        exclude:
+          type: boolean
+        derivedFromProduct:
+          type: boolean
+      required:
+      - derivedFromProduct
+      - exclude
+      - field
+      type: object
+    Object:
+      type: object
+    PredictResults:
+      description: Prediction result including list of recommendations based on provided
+        inputs.
+      example:
+        modelName: SomeString
+        metadata: ""
+        optimizationObjective: SomeString
+        records: List of Values
+        modelId: SomeString
+        warnings: List of Values
+        modelType: SomeString
+        filters:
+        - field: field
+          exclude: true
+          value: value
+          derivedFromProduct: true
+        - field: field
+          exclude: true
+          value: value
+          derivedFromProduct: true
+        filterSet: SomeString
+        rawFilter: SomeString
+        products: List of Values
+      properties:
+        warnings:
+          description: Warnings collected with validation and Recommendations AI API
+            issues.
+          example: List of Values
+          items:
+            $ref: '#/components/schemas/Object'
+          type: array
+        products:
+          description: Recommendations built by Recommendations AI model.
+          example: List of Values
+          items:
+            additionalProperties: true
+            type: object
+          type: array
+        records:
+          description: Recommendations built by Recommendations AI model.
+          example: List of Values
+          items:
+            additionalProperties: true
+            type: object
+          type: array
+        modelId:
+          description: Model Id used for predictions
+          example: SomeString
+          type: string
+        modelName:
+          description: Model Name used for predictions
+          example: SomeString
+          type: string
+        modelType:
+          description: |2
+              Currently supported values:
+              `recommended-for-you`
+              `others-you-may-like`,
+              `frequently-bought-together`
+              `page-optimization`
+              `similar-items`,
+              `buy-it-again`
+              `on-sale-items`
+              `recently-viewed`
+
+              This field together with optimization_objective describe model metadata to use to control model training and
+              serving. See https://cloud.google.com/retail/docs/models for more details.
+          example: SomeString
+          type: string
+        optimizationObjective:
+          description: |2
+              Currently supported values: `ctr`, `cvr`, `revenue-per-order`.
+
+               If not specified, we choose default based on model type. Default depends on type of recommendation:
+              `recommended-for-you` => `ctr`
+              `others-you-may-like` => `ctr`
+              `frequently-bought-together` => `revenue_per_order`
+
+              This field together with modelType describe model metadata to use to control model training and serving.
+              See https://cloud.google.com/retail/docs/models for more details on what the model metadata control and which
+              combination of parameters are valid.
+          example: SomeString
+          type: string
+        filterSet:
+          description: Filter set applied to the recommendation
+          example: SomeString
+          type: string
+        rawFilter:
+          description: RawFilter applied to the recommendation
+          example: SomeString
+          type: string
+        filters:
+          description: Filters applied to the recommendation
+          items:
+            $ref: '#/components/schemas/FilterParameter'
+          type: array
+        metadata:
+          allOf:
+          - $ref: '#/components/schemas/PredictResults.EmptyMetadata'
+          - description: Metadata collected with Recommendations AI API request.
+            type: object
+      title: Predictions
+      type: object
+    PredictResults.EmptyMetadata:
+      type: object
+    RecommendationsRequest:
+      description: Object to wrap all recommendation request configs.
+      example:
+        loginId: loginId
+        productID:
+        - productID
+        - productID
+        strictFiltering: true
+        pageSize: pageSize
+        collection: collection
+        eventType: eventType
+        filters:
+        - field: field
+          exclude: true
+          value: value
+          derivedFromProduct: true
+        - field: field
+          exclude: true
+          value: value
+          derivedFromProduct: true
+        limit: limit
+        name: name
+        placement: placement
+        fields:
+        - fields
+        - fields
+        rawFilter: rawFilter
+        visitorId: visitorId
+      properties:
+        collection:
+          maxLength: 80
+          minLength: 1
+          type: string
+        visitorId:
+          maxLength: 128
+          nullable: true
+          type: string
+        limit:
+          nullable: true
+          type: string
+        pageSize:
+          nullable: true
+          type: string
+        eventType:
+          nullable: true
+          type: string
+        loginId:
+          nullable: true
+          type: string
+        productID:
+          items:
+            type: string
+          nullable: true
+          type: array
+        fields:
+          items:
+            type: string
+          nullable: true
+          type: array
+        filters:
+          items:
+            $ref: '#/components/schemas/Filter'
+          nullable: true
+          type: array
+        rawFilter:
+          nullable: true
+          type: string
+        placement:
+          nullable: true
+          type: string
+        name:
+          nullable: true
+          type: string
+        strictFiltering:
+          description: "The default is true. If strictFiltering true only products\
+            \ that are within the scope of the filter specified. If false, relax the\
+            \ filtering so that the response may contain other products that are outside\
+            \ the scope of the filtering."
+          nullable: true
+          type: boolean
+      required:
+      - collection
+      title: Recommendation
+      type: object
+    PriceInfo_priceEffectiveTime:
+      allOf:
+      - $ref: '#/components/schemas/Timestamp'
+      - description: "The timestamp when the price starts to be effective. This can\
+          \ be set as a future timestamp, and the price is only used for search after\
+          \ price effective time. If so, the original price must be set and original\
+          \ price is used before price effective time. Do not set if price is always\
+          \ effective because it will cause additional latency during search."
+    PriceInfo_priceExpireTime:
+      allOf:
+      - $ref: '#/components/schemas/Timestamp'
+      - description: "The timestamp when the price stops to be effective. The price\
+          \ is used for search before price expire time. If this field is set, the\
+          \ original price must be set and original price is used after price expire\
+          \ time. Do not set if price is always effective because it will cause additional\
+          \ latency during search."
+    PriceInfo_priceRange:
+      allOf:
+      - $ref: '#/components/schemas/PriceInfo.PriceRange'
+      - description: The price range of all variant of product having the same primaryProductId
+    PriceInfo_PriceRange_price:
+      allOf:
+      - $ref: '#/components/schemas/Interval'
+      - description: The inclusive price interval of all variant of the product having
+          the same primaryProductId.
+    PriceInfo_PriceRange_originalPrice:
+      allOf:
+      - $ref: '#/components/schemas/Interval'
+      - description: The inclusive original price internal of all variant of product
+          having the same primaryProductId.
+    ProductDto_priceInfo:
+      allOf:
+      - $ref: '#/components/schemas/PriceInfo'
+      - description: Product price and cost information.
+    ProductDto_rating:
+      allOf:
+      - $ref: '#/components/schemas/Rating'
+      - description: The rating of this product.
+    ProductDto_availableTime:
+      allOf:
+      - $ref: '#/components/schemas/Timestamp'
+      - description: The timestamp when this becomes available for search.
+    ProductDto_audience:
+      allOf:
+      - $ref: '#/components/schemas/Audience'
+      - description: "The target group associated with a given audience (e.g. male,\
+          \ veterans, car owners, musicians, etc.) of the product."
+    ProductDto_colorInfo:
+      allOf:
+      - $ref: '#/components/schemas/ColorInfo'
+      - description: Product color info.
+    ProductDto_publishTime:
+      allOf:
+      - $ref: '#/components/schemas/Timestamp'
+      - description: Time when the product was published
+    ProductDto_retrievableFields:
+      allOf:
+      - $ref: '#/components/schemas/FieldMask'
+      - description: Field mask for retrievable fields.
+    SearchRequestDto_overwrites:
+      allOf:
+      - $ref: '#/components/schemas/Overwrites'
+      - description: "Overwrites field encapsulate entities that can overwrite already\
+          \ existing ones, e.g Rules that need to be overwrites for preview functionality."
+      nullable: true
+    TemplateDto_triggerSet:
+      allOf:
+      - $ref: '#/components/schemas/TriggerSet'
+      - description: The trigger set that triggered a rule.
+    SearchResults_stats:
+      allOf:
+      - $ref: '#/components/schemas/Stats'
+      - description: Object with base response information. Contains count of returned
+          suggestions and time spent to handle the request.
+  securitySchemes:
+    ClientKey:
+      description: The primary or secondary client key as obtained from Command Center.
+        The client key `xxx-yyy-zzz` should be sent in the Authorization header as
+        `client-key xxx-yyy-zzz`.
+      in: header
+      name: Authorization
+      type: apiKey
+    GroupByIncEmployee:
+      description: HTTP basic authentication for GroupBy Inc Employees.
+      scheme: basic
+      type: http
+

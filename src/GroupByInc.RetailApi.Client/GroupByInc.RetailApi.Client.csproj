@@ -1,0 +1,37 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo><!-- setting GenerateAssemblyInfo to false causes this bug https://github.com/dotnet/project-system/issues/3934 -->
+    <TargetFramework>net7.0</TargetFramework>
+    <AssemblyName>GroupByInc.RetailApi.Client</AssemblyName>
+    <PackageId>GroupByInc.RetailApi.Client</PackageId>
+    <OutputType>Library</OutputType>
+    <Authors>GroupBy Inc.</Authors>
+    <Company>GroupBy Inc.</Company>
+    <AssemblyTitle>GroupBy Retail API Client</AssemblyTitle>
+    <Description>GroupBy Retail API Client</Description>
+    <Copyright>Copyright (c) GroupBy Inc. 2023.</Copyright>
+    <RootNamespace>GroupByInc.RetailApi.Client</RootNamespace>
+    <Version>1.0.0</Version>
+    <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\GroupByInc.RetailApi.Client.xml</DocumentationFile>
+    <PackageLicenseExpression>UNLICENSED</PackageLicenseExpression>
+    <RepositoryUrl>https://github.com/groupby/gb-retailapi-csharp-client.git</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageReleaseNotes>Minor update</PackageReleaseNotes>
+    <Nullable>annotations</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="JsonSubTypes" Version="2.0.1" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="RestSharp" Version="110.2.0" />
+    <PackageReference Include="Polly" Version="7.2.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="System.Web" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="System.Web" />
+  </ItemGroup>
+</Project>
