@@ -2,7 +2,7 @@ openapi: 3.0.3
 info:
   description: GroupBy Retail API
   title: GroupBy Retail
-  version: "0.0"
+  version: 0.0.0
 externalDocs:
   description: ""
   url: ""
